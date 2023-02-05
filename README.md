@@ -1,66 +1,49 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Filament Custom Field Debugging - Temporary Repo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This temporary repo is for debugging an issue with a Filament custom field.
 
-## About Laravel
+## Setup
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. git clone
+1. configure database connection (SQLite is fine)
+1. artisan migrate
+1. artisan db:seed
+1. artisan make:filament-user
+1. Set `.env` values
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Env values
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+These `.env` values are required:
 
-## Learning Laravel
+* SQUARE_APP_ID
+* SQUARE_ACCESS_TOKEN
+* SQUARE_LOCATION_ID
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Workflow
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. Visit https://site.test/admin/subscriptions
+1. Click "Renew" action next to a subscription record
+1. Set the renewal price or use what's pre-filled 
+1. Select "Credit Card" as payment method
+1. Observe Square payment form appearing
+1. Use `4111 1111 1111 1111`, any expiration date, CVV `111`, any postal code
+1. Click "Charge Credit Card" button, observe "Payment successful" message appear below button
+1. Observe the value of the fake payment ID returned from the Square javascript displayed for debugging as the current field state
+1. Finally, click "Renew" to attempt to submit the renewal form
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Problems
 
-## Laravel Sponsors
+1. Highest priority: value of custom field state is not included in the $data array that arrives in getAction() in RenewSubscriptionAction when "Renew" is clicked.
+```
+[2023-02-05 15:32:17] local.DEBUG: Array
+(
+    [subscriptionId] => 1
+    [renewalPrice] => 9
+    [paymentMethod] => card
+    [squarePayment] =>
+)
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+2. Square form components flicker/disappear when other parts of the dom are refreshed or when there's a payment error and the card info has to be filled out twice. Have tried using wire:ignore but this can affect the live updating of the charge dollar amount in what is submitted to Square, which I'd like to preserve as the UI if possible.
+3. renewalPrice field does not become disabled as expected when payment method is switched to Credit Card. This is one way I was attempting to deal with DOM refresh issues by being able to set wire:ignore on the "square-payment-wrapper" div and force the user to select a price before selecting the CC payment method, but it is not the ideal UX.
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
