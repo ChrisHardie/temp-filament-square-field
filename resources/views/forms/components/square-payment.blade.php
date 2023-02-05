@@ -16,15 +16,18 @@
         })"
          x-init="launchSquareForm('{{ config('wwn.integrations.square.app_id') }}', '{{ config('wwn.integrations.square.location_id') }}')"
     >
-        <div id="square-payment-wrapper" wire:ignore>
+        <div id="square-payment-wrapper">
             <form id="payment-form">
-                <div id="card-container"></div>
+                <div id="card-container" wire:ignore></div>
                 <button id="card-button" type="button"
                         @click.prevent="handleCardButtonClicked( {{ $getCurrentPrice() }}, {{  $getRecord()->id }} )"
                 >Charge Credit Card ${{ number_format($getCurrentPrice(), 2) }}</button>
             </form>
             <div id="payment-status-container"></div>
-            <div x-html="state"></div>
+            <div>
+                <p>Value of field state:</p>
+                <div x-html="state"></div>
+            </div>
         </div>
     </div>
 </x-dynamic-component>
