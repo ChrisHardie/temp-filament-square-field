@@ -16,3 +16,10 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/public/css
+/public/js
+/public/vendor
+/storage/debugbar
+_ide_helper.php
+draft.yaml
+.blueprint
