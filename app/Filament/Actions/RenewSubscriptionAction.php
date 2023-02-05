@@ -54,7 +54,7 @@ class RenewSubscriptionAction extends Action
         return static function (array $data, Subscription $record, $action): void {
             Log::debug(print_r($data, true));
 
-            if (! empty($data['squarePaymentID'])) {
+            if (! empty($data['squarePayment'])) {
                 Notification::make()
                     ->title('Subscription renewed successfully')
                     ->success()
@@ -100,12 +100,12 @@ class RenewSubscriptionAction extends Action
                         'card' => 'Credit Card',
                         'other' => 'Other',
                     ])->required()->reactive(),
-//                SquarePayment::make('squarePayment')
-//                    ->visible(static fn (Closure $get): bool => 'card' === $get('paymentMethod'))
-//                    ->disableLabel()
-//                    ->setCurrentPrice(fn ($get) => $get('renewalPrice'))
-//                    ->reactive()
-//                    ->columnSpan(2),
+                SquarePayment::make('squarePayment')
+                    ->visible(static fn (Closure $get): bool => 'card' === $get('paymentMethod'))
+                    ->disableLabel()
+                    ->setCurrentPrice(fn ($get) => $get('renewalPrice'))
+                    ->reactive()
+                    ->columnSpan(2),
             ])
         ];
     }
