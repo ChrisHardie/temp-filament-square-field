@@ -23,7 +23,7 @@
                         @click.prevent="handleCardButtonClicked( {{ $getCurrentPrice() }}, {{  $getRecord()->id }} )"
                 >Charge Credit Card ${{ number_format($getCurrentPrice(), 2) }}</button>
             </form>
-            <div id="payment-status-container"></div>
+            <div id="payment-status-container" wire:ignore></div>
             <div>
                 <p>Value of field state:</p>
                 <div x-html="state"></div>

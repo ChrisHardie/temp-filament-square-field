@@ -81,18 +81,9 @@ class RenewSubscriptionAction extends Action
                 '2xl' => 2,
             ])->schema([
                 \Filament\Forms\Components\TextInput::make('renewalPrice')
-                    ->mask(
-                        fn (Mask $mask) => $mask
-                            ->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2)
-                            ->range()
-                            ->from(0)
-                            ->to(100)
-                            ->maxValue(100)
-                            ->minValue(0)
-                    )
+                    ->prefix('$')
                     ->required()
-                    ->reactive()
-                    ->disabled(static fn (Closure $get): bool => 'card' === $get('paymentMethod')),
+                    ->lazy(),
                 \Filament\Forms\Components\Select::make('paymentMethod')
                     ->options([
                         'check' => 'Check',

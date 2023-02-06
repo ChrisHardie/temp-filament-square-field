@@ -1,6 +1,6 @@
 Alpine.data(
     'squarePaymentComponent',
-    (state) =>
+    ({ state }) =>
     {
         let card;
         let payments;
